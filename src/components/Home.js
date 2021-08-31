@@ -13,16 +13,14 @@ const Home = () => {
   const [favourites, setFavourites] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [moviesPerPage] = useState(10);
-  const moviesListData = useContext(MovieContext);
+  const moviesListContext = useContext(MovieContext);
 
   const indexOfLastMovies = currentPage * moviesPerPage;
   const indexOfFirstMovies = indexOfLastMovies - moviesPerPage;
-  const currentMovies = movies.slice(indexOfFirstMovies, indexOfLastMovies);
 
-  console.log(moviesListData);
   const getMovieRequest = (searchValue) => {
     if (searchValue) {
-      const filtered = moviesListData.filter((el) => {
+      const filtered = moviesListContext.filter((el) => {
         const name = el["im:name"].label.toLowerCase();
         const searchedQuery = searchValue.toLowerCase();
 
@@ -30,17 +28,17 @@ const Home = () => {
       });
       setMovies(filtered);
     } else {
-      setMovies(moviesListData);
+      const currentMovies = moviesListContext.slice(
+        indexOfFirstMovies,
+        indexOfLastMovies
+      );
+      setMovies(currentMovies);
     }
   };
 
   useEffect(() => {
     getMovieRequest(searchValue);
-
-    return () => {
-      setMovies([]);
-    };
-  }, [searchValue, moviesListData]);
+  }, [moviesListContext, searchValue, currentPage]);
 
   useEffect(() => {
     const movieFavourites = JSON.parse(
@@ -51,7 +49,6 @@ const Home = () => {
 
   const setPaginateNumber = (pageNumber) => {
     setCurrentPage(pageNumber);
-    console.log(currentMovies);
   };
 
   const removeFavouriteMovie = (movie) => {
@@ -79,25 +76,19 @@ const Home = () => {
       <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
       <Pagination
         moviesPerPage={moviesPerPage}
-        totalMovies={movies.length}
+        totalMovies={moviesListContext.length}
         paginate={setPaginateNumber}
       />
-
       <div className="row d-flex align-item-center my-4">
         <MovieListHeading heading="Movies" />
       </div>
       <div className="row">
-        <MovieContext.Consumer>
-          {context => (
-            <MovieList
-              movies={context}
-              handleClickFavourite={addFavouriteMovie}
-              favouriteComponent={AddFavourites}
-            />
-          )}
-        </MovieContext.Consumer>
+        <MovieList
+          movies={movies}
+          handleClickFavourite={addFavouriteMovie}
+          favouriteComponent={AddFavourites}
+        />
       </div>
-
       <div className="row d-flex align-item-center my-4">
         <MovieListHeading heading="Favourites" />
       </div>

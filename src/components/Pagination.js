@@ -1,4 +1,15 @@
 import React from "react";
+import styled from "styled-components";
+
+const PaginationStyled = styled.nav`
+  justify-content: center;
+`;
+
+const PaginationButton = styled.button`
+  background-color: inherit;
+  color: rgb(255,193,7);
+  border-color: rgb(255,193,7);
+`;
 
 const Pagination = ({ moviesPerPage, totalMovies, paginate }) => {
   const pageNumbers = [];
@@ -9,15 +20,18 @@ const Pagination = ({ moviesPerPage, totalMovies, paginate }) => {
 
   return (
     <nav>
-      <ul className="pagination">
+      <PaginationStyled className="pagination mt-4">
         {pageNumbers.map((number) => (
-          <li key={number} className='page-item'>
-            <button onClick={() => paginate(number)} className='page-link'>
-                {number}
-            </button>
+          <li key={number} className="page-item">
+            <PaginationButton
+              onClick={() => paginate(number)}
+              className="page-link"
+            >
+              {number}
+            </PaginationButton>
           </li>
         ))}
-      </ul>
+      </PaginationStyled>
     </nav>
   );
 };
